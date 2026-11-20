@@ -35,9 +35,9 @@ jobs:
           unzip -q templates.tpz -d tpl
           mv tpl/templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
           echo "GODOT=$PWD/Godot_v${GODOT_VERSION}-stable_linux.x86_64" >> "$GITHUB_ENV"
-
+          
       - name: Export de l'APK
-        run: ./tools/build_apk.sh
+        run: bash tools/build_apk.sh
 
       - uses: actions/upload-artifact@v5
         with:
