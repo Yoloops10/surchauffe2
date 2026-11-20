@@ -1,0 +1,38 @@
+; Fichier de configuration du moteur — SURCHAUFFE
+config_version=5
+
+[application]
+
+config/icon="res://icon.png"
+
+config/name="Surchauffe"
+config/description="Casino-clicker roguelite en pixel art, genere 100 % en code."
+run/main_scene="res://scenes/Boot.tscn"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+config/quit_on_go_back=true
+
+[autoload]
+
+Save="*res://autoload/Save.gd"
+Game="*res://autoload/Game.gd"
+Sfx="*res://autoload/Sfx.gd"
+Fx="*res://autoload/Fx.gd"
+
+[display]
+
+window/size/viewport_width=540
+window/size/viewport_height=960
+window/size/window_width_override=360
+window/size/window_height_override=640
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true
+environment/defaults/default_clear_color=Color(0.0784314, 0.0588235, 0.105882, 1)
