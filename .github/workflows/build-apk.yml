@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 env:
   GODOT_VERSION: "4.4.1"
 
@@ -35,7 +38,7 @@ jobs:
           unzip -q templates.tpz -d tpl
           mv tpl/templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
           echo "GODOT=$PWD/Godot_v${GODOT_VERSION}-stable_linux.x86_64" >> "$GITHUB_ENV"
-          
+
       - name: Export de l'APK
         run: bash tools/build_apk.sh
 
@@ -43,3 +46,10 @@ jobs:
         with:
           name: Surchauffe-apk
           path: build/Surchauffe.apk
+
+      - name: Publier l'APK dans les Releases (lien de telechargement stable)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag --repo "$GITHUB_REPOSITORY" || true
+          gh release create latest build/Surchauffe.apk --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Surchauffe (dernier build)" --notes "APK Android signe en debug, construit automatiquement."
