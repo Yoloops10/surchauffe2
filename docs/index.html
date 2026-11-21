@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surchauffe</title>
+<meta name="description" content="Surchauffe, un casino-clicker en pixel art pour Android. Tu es la machine à sous. Par Yoloops.">
+<meta name="theme-color" content="#140f1b">
+<link rel="icon" href="img/sym_sept.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --encre:#140f1b; --prune:#2b1b3d; --rouge:#e8453c; --orange:#ff8a3d;
+  --or:#ffd166; --creme:#f5e6c8; --vert:#3ecf8e; --gris:#8a7f96;
+  --pixel:"Pixelify Sans","Trebuchet MS",sans-serif;
+  --texte:"Barlow","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--encre);color:var(--creme);font:400 19px/1.55 var(--texte);
+  padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+#fond{position:fixed;inset:0;width:100%;height:100%;z-index:-1;image-rendering:pixelated;display:block}
+img{image-rendering:pixelated;max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+.page{max-width:1080px;margin:0 auto;padding-block:20px 64px}
+
+.haut{display:flex;justify-content:space-between;gap:16px;font-size:16px;color:var(--gris)}
+.haut a{text-decoration:none;border-bottom:1px solid currentColor}
+
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:56px;align-items:center;margin-top:44px}
+.logo{width:min(100%,576px);margin-bottom:30px}
+h1{font:700 clamp(30px,5vw,46px)/1.08 var(--pixel);margin:0 0 16px;letter-spacing:.01em}
+h1 span{color:var(--orange)}
+.lead{max-width:34em;color:var(--creme);opacity:.9;margin:0}
+.dl{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}
+.bouton{
+  font:700 22px/1 var(--pixel);letter-spacing:.04em;text-decoration:none;color:var(--encre);
+  background:var(--vert);padding:20px 28px;display:inline-block;
+  border:4px solid var(--encre);box-shadow:inset 0 -6px 0 rgba(0,0,0,.28), 0 6px 0 #1b6b49;
+  transition:transform .06s,box-shadow .06s;
+}
+.bouton:hover{transform:translateY(2px);box-shadow:inset 0 -6px 0 rgba(0,0,0,.28),0 4px 0 #1b6b49}
+.bouton:active{transform:translateY(6px);box-shadow:inset 0 -6px 0 rgba(0,0,0,.28),0 0 0 #1b6b49}
+.dl small{font-size:16px;color:var(--gris);max-width:15em;line-height:1.35}
+
+/* machine a sous : on peut tirer le levier */
+.machine{background:var(--prune);border:4px solid var(--encre);outline:4px solid var(--rouge);outline-offset:0;padding:18px 18px 20px;position:relative}
+.ampoules{display:flex;justify-content:space-between;margin:-6px 4px 14px}
+.ampoules i{width:10px;height:10px;background:var(--or);opacity:.35}
+.ampoules i:nth-child(odd){animation:cligne 1.2s steps(1) infinite}
+.ampoules i:nth-child(even){animation:cligne 1.2s steps(1) infinite .6s}
+@keyframes cligne{50%{opacity:1}}
+.rouleaux{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--encre);padding:8px}
+.rouleau{background:var(--creme);aspect-ratio:1;display:grid;place-items:center;overflow:hidden}
+.rouleau img{width:62%}
+.rouleau.tourne img{animation:defile .09s linear infinite}
+@keyframes defile{from{transform:translateY(-30%)}to{transform:translateY(30%)}}
+.bas{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px}
+#resultat{font:700 20px/1.2 var(--pixel);min-height:1.2em;color:var(--creme)}
+#resultat.gagne{color:var(--or)}
+.tirer{font:700 18px/1 var(--pixel);background:var(--orange);color:var(--encre);border:4px solid var(--encre);
+  padding:14px 18px;cursor:pointer;box-shadow:inset 0 -5px 0 rgba(0,0,0,.25),0 5px 0 #a4521a;white-space:nowrap}
+.tirer:active{transform:translateY(5px);box-shadow:inset 0 -5px 0 rgba(0,0,0,.25),0 0 0 #a4521a}
+.tirer[disabled]{filter:saturate(.5);cursor:default}
+.astuce{margin:12px 0 0;font-size:15px;color:var(--gris);text-align:center}
+
+/* texte courant */
+.corps{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;margin-top:96px}
+h2{font:700 28px/1.15 var(--pixel);margin:0 0 14px;color:var(--or)}
+.corps p{margin:0 0 14px;max-width:32em}
+.corps b{font-weight:600;color:var(--orange)}
+.corps ul{margin:0;padding:0;list-style:none}
+.corps li{padding-left:22px;position:relative;margin-bottom:6px}
+.corps li::before{content:"";position:absolute;left:0;top:.68em;width:8px;height:8px;background:var(--rouge)}
+
+.vues{margin-top:96px}
+.rail{display:flex;gap:18px;overflow-x:auto;padding:6px 2px 18px;scroll-snap-type:x proximity}
+.rail img{flex:0 0 auto;width:250px;aspect-ratio:540/960;scroll-snap-align:start;border:4px solid var(--encre);background:var(--prune)}
+.rail img:nth-child(even){margin-top:28px}
+.rail::-webkit-scrollbar{height:8px}.rail::-webkit-scrollbar-thumb{background:var(--gris)}.rail::-webkit-scrollbar-track{background:var(--prune)}
+
+.pied{margin-top:80px;font-size:16px;color:var(--gris);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:800px){
+  body{font-size:18px}
+  .hero{grid-template-columns:minmax(0,1fr);gap:44px;margin-top:30px}
+  .corps{grid-template-columns:minmax(0,1fr);gap:40px;margin-top:72px}
+  .bouton{display:block;text-align:center}
+  .rail img{width:200px}
+}
+@media (prefers-reduced-motion:reduce){.rouleau.tourne img,.ampoules i{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="fond" aria-hidden="true"></canvas>
+<div class="page">
+
+  <div class="haut"><span>par Yoloops</span><a href="https://github.com/Yoloops10/surchauffe2" rel="noopener">code sur GitHub</a></div>
+
+  <header class="hero">
+    <div>
+      <img class="logo" src="img/titre.png" alt="Surchauffe" width="384" height="72">
+      <h1>Tu es la machine à sous. <span>Ne surchauffe pas.</span></h1>
+      <p class="lead">Tape le levier. Plus tu tapes, plus ça chauffe, plus ça paie. À 100 %, tout se verrouille. Un jeu de casino en pixel art pour Android.</p>
+      <div class="dl">
+        <a class="bouton" href="https://github.com/Yoloops10/surchauffe2/releases/latest/download/Surchauffe.apk" rel="noopener">TÉLÉCHARGER</a>
+        <small>Fichier APK, gratuit, hors ligne, sans pub.</small>
+      </div>
+    </div>
+
+    <div>
+      <div class="machine">
+        <div class="ampoules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="rouleaux" id="rouleaux">
+          <div class="rouleau"><img src="img/sym_cerise.png" alt="" width="64" height="64"></div>
+          <div class="rouleau"><img src="img/sym_sept.png" alt="" width="64" height="64"></div>
+          <div class="rouleau"><img src="img/sym_cloche.png" alt="" width="64" height="64"></div>
+        </div>
+        <div class="bas">
+          <div id="resultat" role="status" aria-live="polite">Essaie.</div>
+          <button class="tirer" id="tirer" type="button">TIRER</button>
+        </div>
+      </div>
+      <p class="astuce">Celle-ci est la vraie roue du jeu, en plus lente.</p>
+    </div>
+  </header>
+
+  <div class="corps">
+    <section>
+      <h2>Une nuit au casino</h2>
+      <p>Dix tables à vider, chacune avec un objectif de jetons et une contrainte. Trois d'entre elles sont des boss : l'un interdit la moindre surchauffe, un autre coupe ta chauffe en deux, le dernier supprime la roue.</p>
+      <p>Entre deux tables, la maison te tend trois cartes. Tu en gardes une. Trois cœurs, et la nuit est finie. Il te reste des <b>plombs</b> pour acheter une des douze machines de départ.</p>
+      <p>Il y a aussi un défi du jour, dix-huit succès et six niveaux de mise pour ceux qui veulent souffrir.</p>
+    </section>
+    <section>
+      <h2>Installer</h2>
+      <p>Pas sur le Play Store pour l'instant. Depuis ton téléphone&nbsp;:</p>
+      <ul>
+        <li>télécharge le fichier avec le bouton vert</li>
+        <li>ouvre-le, et accepte d'installer depuis ce navigateur si Android le demande</li>
+        <li>si Google propose d'analyser l'appli, ignore ou choisis « installer quand même »</li>
+      </ul>
+      <p style="margin-top:14px">Android 7 ou plus. Le jeu ne demande aucune permission et n'a pas besoin d'internet.</p>
+    </section>
+  </div>
+
+  <section class="vues">
+    <h2>Dans le jeu</h2>
+    <div class="rail" tabindex="0" aria-label="Captures d'écran">
+      <img src="img/menu.png" alt="Le menu" loading="lazy" width="540" height="960">
+      <img src="img/run.png" alt="Une table : la jauge de chauffe et la roue" loading="lazy" width="540" height="960">
+      <img src="img/cartes.png" alt="Le choix d'une carte" loading="lazy" width="540" height="960">
+      <img src="img/machines.png" alt="Les machines à débloquer" loading="lazy" width="540" height="960">
+      <img src="img/succes.png" alt="Les succès et les statistiques" loading="lazy" width="540" height="960">
+    </div>
+  </section>
+
+  <div class="pied"><span>Surchauffe 1.0, fait avec Godot 4</span><span>Yoloops</span></div>
+</div>
+
+<script>
+/* --- fond : tourbillon tramé en 3 couleurs, comme dans le jeu (statique si l'animation est réduite) --- */
+(function(){
+  var c=document.getElementById('fond'),x=c.getContext('2d'),S=6,w=0,h=0,img;
+  var B=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+  var cols=[[20,15,27],[43,27,61],[96,34,48]];
+  var calme=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function taille(){w=Math.ceil(innerWidth/S);h=Math.ceil(innerHeight/S);c.width=w;c.height=h;img=x.createImageData(w,h)}
+  function dessine(t){
+    var d=img.data,i=0;
+    for(var y=0;y<h;y++)for(var xx=0;xx<w;xx++){
+      var v=Math.sin(xx*.06+t)+Math.sin(y*.08-t*.8)+Math.sin((xx+y)*.045+t*.6)+Math.sin(Math.hypot(xx-w*.2,y-h*.1)*.09-t);
+      v=(v+4)/8; /* 0..1 */
+      var th=B[(xx&3)+((y&3)<<2)]/16;
+      var n=v*2.1+th*.8; /* seuils : encre / prune / rouge sombre */
+      var k=n<1.05?0:(n<2.0?1:2);
+      var p=cols[k];d[i++]=p[0];d[i++]=p[1];d[i++]=p[2];d[i++]=255;
+    }
+    x.putImageData(img,0,0);
+  }
+  taille();dessine(1.5);
+  addEventListener('resize',function(){taille();dessine(1.5)});
+  if(!calme){var last=0;(function boucle(ms){if(ms-last>90){dessine(1.5+ms/4200);last=ms}requestAnimationFrame(boucle)})(0)}
+})();
+
+/* --- la roue : meme esprit que celle du jeu --- */
+(function(){
+  var syms=['cerise','citron','cloche','sept','jackpot','zero'];
+  var gains={cerise:5,citron:8,cloche:15,sept:40,jackpot:120,zero:0};
+  var r=[].slice.call(document.querySelectorAll('.rouleau')),btn=document.getElementById('tirer'),res=document.getElementById('resultat');
+  function pose(i,s){r[i].querySelector('img').src='img/sym_'+s+'.png'}
+  function alea(){return syms[Math.floor(Math.random()*syms.length)]}
+  btn.addEventListener('click',function(){
+    btn.disabled=true;res.className='';res.textContent='…';
+    var tirage=[alea(),alea(),alea()],q=Math.random();
+    if(q<.14){tirage=[tirage[0],tirage[0],tirage[0]]}
+    else if(q<.45){var a=alea();tirage=[a,a,alea()].sort(function(){return Math.random()-.5})}
+    var iv=setInterval(function(){r.forEach(function(el,i){if(el.classList.contains('tourne'))pose(i,alea())})},80);
+    r.forEach(function(el){el.classList.add('tourne')});
+    [350,650,950].forEach(function(ms,i){setTimeout(function(){
+      r[i].classList.remove('tourne');pose(i,tirage[i]);
+      if(i===2){clearInterval(iv);fin(tirage)}
+    },ms)});
+  });
+  function fin(t){
+    btn.disabled=false;
+    if(t[0]===t[1]&&t[1]===t[2]){
+      res.className='gagne';
+      res.textContent=t[0]==='jackpot'?'JACKPOT ×120 !':(t[0]==='zero'?'TROIS ZÉROS. RIEN.':'TRIPLE ×'+gains[t[0]]);
+      if(t[0]==='zero')res.className='';
+    }else if(t[0]===t[1]||t[1]===t[2]||t[0]===t[2]){res.className='gagne';res.textContent='PAIRE ×2'}
+    else res.textContent='RIEN. RETAPE.';
+  }
+})();
+</script>
+</body>
+</html>
